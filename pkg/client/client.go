@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"runtime"
 	"time"
+  "crypto/tls"
 )
 
 var (
@@ -34,9 +35,14 @@ type Count struct {
 // New creates a new instance of TpmClient which can then be used to make api calls
 // It configures the underlying net/http.client with a sensible timeout.
 func New(server string, username string, password string) TpmClient {
+  
+  tr := &http.Transport{
+      TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+  }
 	client := TpmClient{
 		Client: &http.Client{
 			Timeout: time.Second * 3,
+		  Transport: tr,
 		},
 		Server:      server,
 		Username:    username,
